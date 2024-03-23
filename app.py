@@ -2,9 +2,17 @@
 import streamlit as st
 from openai import OpenAI
 from functions import prompt
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+GPT_API_KEY = os.getenv('GPT_API_KEY')
+
 client = OpenAI(
     # This is the default and can be omitted
-    api_key="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"
+    api_key=GPT_API_KEY
 )
 
 st.write("""
