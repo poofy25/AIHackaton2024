@@ -1,8 +1,42 @@
-examplePrompt = 'Return the answer as json (example : {"grammar":0,"politics":1 ...etc}) \n '
-grammarPrompt = 'Does this article contain obvious / big grammatical mistakes ?  ? respond in binary 0 / 1 (response example : 0) \n '
-discriminatoryPrompt = 'Does this article contain discriminatory content ? respond in binary 0 / 1 (response example : 0) \n '
-politicsPrompt = 'Does this article contain politic content ? respond in binary 0 / 1 (response example : 1) \n '
+import requests
+import json 
 
-prompt = grammarPrompt + discriminatoryPrompt + politicsPrompt + examplePrompt + "Article :"
-def my_function():
-  print("Hello from a function")
+def getContentFromLink (link) :
+    apiLink = 'http://localhost:8990/rest/process'
+    data = [
+      {
+        "content": link,
+        "language": "EMPTY"
+      }
+    ]
+    getresponse = requests.post(apiLink , json=data)
+    responseJson = json.loads(getresponse.text)
+    return responseJson[0]['text']
+
+# def getSentimentFromContent (content) :
+#     url = "https://twinword-sentiment-analysis.p.rapidapi.com/analyze/"
+#     querystring = {"text":content}
+
+#     headers = {
+# 	  "X-RapidAPI-Key": "8f891280b8msh97f5e47be9aeedfp126f7bjsn545322e02f10",
+# 	  "X-RapidAPI-Host": "twinword-sentiment-analysis.p.rapidapi.com"
+#     }
+#     response = requests.get(url, headers=headers, params=querystring)
+#     responseJson = response.json()
+#     return responseJson
+
+def getMetaData (link) :
+
+    url = "https://site-metadata.p.rapidapi.com/metadata/"
+
+    querystring = {"url":link}
+
+    headers = {
+      "X-RapidAPI-Key": "8f891280b8msh97f5e47be9aeedfp126f7bjsn545322e02f10",
+      "X-RapidAPI-Host": "site-metadata.p.rapidapi.com"
+    }
+
+    response = requests.get(url, headers=headers, params=querystring)
+    
+
+    return response.json()

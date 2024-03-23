@@ -1,9 +1,25 @@
 # Import convention
+
 import streamlit as st
 from openai import OpenAI
-from functions import prompt
 from dotenv import load_dotenv
 import os
+import json
+
+
+
+
+# from promptFunctions import prompt
+# from promptFunctions import returnSmile
+
+from functions import getContentFromLink
+from functions import getMetaData
+
+from promptFunctions import getGPTResponse
+
+from calculateWeights import calculateWeights
+from calculateWeights import returnEmoji
+
 
 
 load_dotenv()
@@ -21,20 +37,22 @@ st.write("""
 
 link = st.text_input('Link la articolul stirii')
 
-st.write("""
-*sau*
-""")
-text = st.text_area('Continutul stirii')
 
 
 if st.button('Verifica calitatea stirii'):
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt + text,
-            }
-        ],
-        model="gpt-4-turbo-preview",
-    )
-    st.write(chat_completion.choices[0].message.content)
+    content = getContentFromLink(link)
+    metadata = getMetaData(link)
+    gptResponse = getGPTResponse(content , metadata["title"])
+    data = {
+        "grammar":gptResponse["grammar"],
+        "discriminatory":gptResponse['discriminatory'],
+        "morbid":gptResponse['morbid'],
+        "corellency":gptResponse['corellency'],
+        "questions": gptResponse['questions'],
+        "emotion":gptResponse['emotion']
+    }
+    weight = calculateWeights(data)
+    emoji = returnEmoji(weight)
+    st.write(weight)
+    st.subheader(emoji)
+    st.write(data)
