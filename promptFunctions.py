@@ -17,14 +17,11 @@ load_dotenv()
 GPT_API_KEY = os.getenv('GPT_API_KEY')
 
 client = OpenAI(
-    # This is the default and can be omitted
     api_key=GPT_API_KEY
 )
 
-
 def getGPTResponse(content , title):
     prompt = grammarPrompt + discriminatoryPrompt + morbidPrompt + corellencyPrompt + questionsPrompt + emotionPrompt + examplePrompt + "Title : " + f"{title} \n" + "Content : " + f"{content} \n"
-    print(prompt)
     chat_completion = client.chat.completions.create(
         messages=[
             {

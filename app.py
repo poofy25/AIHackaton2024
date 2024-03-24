@@ -1,57 +1,51 @@
-# Import convention
 
 import streamlit as st
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
 
-
-
-
-# from promptFunctions import prompt
-# from promptFunctions import returnSmile
+st.set_page_config(
+    page_title="Media Detectives",
+    page_icon="./assets/logo.png",
+)
 
 from functions import getContentFromLink
 from functions import getMetaData
 
 from promptFunctions import getGPTResponse
 
-from calculateWeights import calculateWeights
+from calculateWeights import calculatePercentage
 from calculateWeights import returnEmoji
 
+from details import getDetails
+
+from blacklist import checkIfBlacklisted
 
 
-load_dotenv()
+st.title("Media Detectives")
 
-GPT_API_KEY = os.getenv('GPT_API_KEY')
+st.subheader("Check the quaility of news articles")
 
-client = OpenAI(
-    # This is the default and can be omitted
-    api_key=GPT_API_KEY
-)
-
-st.write("""
-# Calitatea stirii
-""")
-
-link = st.text_input('Link la articolul stirii')
+link = st.text_input('Link to the news article')
 
 
-
-if st.button('Verifica calitatea stirii'):
+if st.button('Verify quality'):
     content = getContentFromLink(link)
     metadata = getMetaData(link)
     gptResponse = getGPTResponse(content , metadata["title"])
+    isBlackListed = checkIfBlacklisted(link)
     data = {
         "grammar":gptResponse["grammar"],
         "discriminatory":gptResponse['discriminatory'],
         "morbid":gptResponse['morbid'],
         "corellency":gptResponse['corellency'],
         "questions": gptResponse['questions'],
-        "emotion":gptResponse['emotion']
+        "emotion":gptResponse['emotion'],
+        "blackListed":isBlackListed
     }
-    weight = calculateWeights(data)
-    emoji = returnEmoji(weight)
-    st.write(weight)
-    st.subheader(emoji)
-    st.write(data)
+    percentage = calculatePercentage(data)
+    emoji = returnEmoji(percentage)
+    details = getDetails(data, emoji["text"])
+    st.title(f"Article quality : {emoji["emoji"]}  ({emoji["text"]})")
+    st.write(f"Precentage : {percentage} % (quality)")
+    st.subheader("Why ?")
+    st.write(details)
+    print(data)
+

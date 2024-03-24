@@ -13,18 +13,6 @@ def getContentFromLink (link) :
     responseJson = json.loads(getresponse.text)
     return responseJson[0]['text']
 
-# def getSentimentFromContent (content) :
-#     url = "https://twinword-sentiment-analysis.p.rapidapi.com/analyze/"
-#     querystring = {"text":content}
-
-#     headers = {
-# 	  "X-RapidAPI-Key": "8f891280b8msh97f5e47be9aeedfp126f7bjsn545322e02f10",
-# 	  "X-RapidAPI-Host": "twinword-sentiment-analysis.p.rapidapi.com"
-#     }
-#     response = requests.get(url, headers=headers, params=querystring)
-#     responseJson = response.json()
-#     return responseJson
-
 def getMetaData (link) :
 
     url = "https://site-metadata.p.rapidapi.com/metadata/"

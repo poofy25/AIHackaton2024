@@ -1,20 +1,19 @@
-from promptFunctions import getGPTResponse
-from functions import getContentFromLink
-
 
 weights = {
-    "grammar":1,
-    "corellency":3,
-    "discriminatory":5,
-    "questions":3,
-    "emotion":3,
-    "morbid":4
+    "grammar": 4,
+    "corellency": 7,
+    "discriminatory": 13,
+    "questions": 7,
+    "emotionNegative": 11,
+    "emotionPositive": 1,
+    "morbid": 17,
+    "isBlackListed": 40
 }
 
 
 
-def calculateWeights (data):
-    totalWeights = 19
+def calculatePercentage (data):
+    totalWeights = 100
     total = 0
 
 
@@ -23,13 +22,15 @@ def calculateWeights (data):
     if data["discriminatory"] == 1 :total += weights["discriminatory"]
     if data["questions"] == 1 :total += weights["questions"]
     if data["morbid"] == 1 :total += weights["morbid"]
-    if data["emotion"] == "Positive" :total += weights["emotion"]
-    if data["emotion"] == "Negative" :total += weights["emotion"]
+    if data["emotion"] == "Positive" :total += weights["emotionPositive"]
+    if data["emotion"] == "Negative" :total += weights["emotionNegative"]
+    if data["blackListed"] == 1 :total += weights["isBlackListed"]
 
     percentage = 100 - ((total * 100) / totalWeights)
+    percentage = float("{:.2f}".format(percentage))
     return percentage
 
 def returnEmoji (percentage) :
-    if(percentage > 66) : return '😃'
-    if(percentage > 33 ) : return '😑'
-    if(percentage <= 33 ) : return '💩'
+    if(percentage > 80) : return {"emoji":'😃' , "text":"Good"}
+    if(percentage > 40 ) : return {"emoji":'😑' , "text":"Average"}
+    if(percentage <= 33 ) : return {"emoji":'💩' , "text":"Poor"}
